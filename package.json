@@ -1,0 +1,20 @@
+{
+  "name": "divine-backend",
+  "version": "1.0.0",
+  "description": "start",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Moki00/divine-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Moki00/divine-backend/issues"
+  },
+  "homepage": "https://github.com/Moki00/divine-backend#readme"
+}
