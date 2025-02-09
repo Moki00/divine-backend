@@ -1,0 +1,15 @@
+my-node-app/
+│── node_modules/
+│── .env
+│── .gitignore
+│── package.json
+│── README.md
+│── src/
+	│── server.js
+	│── routes/
+		│── userRoutes.js
+	│── controllers/
+	│── models/
+		│── userModel.js
+	│── config/
+		│── db.js
