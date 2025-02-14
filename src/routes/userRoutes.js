@@ -1,15 +1,11 @@
-const express = require('express');
-const { getAllUsers } = require('../models/userModel');
-
+const express = require("express");
 const router = express.Router();
+const userController = require("../controllers/userController");
 
-router.get('/', async (req, res) => {
-  try {
-    const users = await getAllUsers();
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching users" });
-  }
-});
+router.post("/", userController.createUser);
+router.get("/", userController.getAllUsers);
+router.get("/:id", userController.getUserById);
+router.put("/:id", userController.updateUser);
+router.delete("/:id", userController.deleteUser);
 
 module.exports = router;

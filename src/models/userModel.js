@@ -1,4 +1,5 @@
 const db = require("../config/db");
+const bcrypt = require("bcrypt");
 
 // Create a new user
 async function createUser(name, email) {
@@ -13,15 +14,10 @@ async function getAllUsers() {
     const [rows] = await db.query("SELECT * FROM users");
     return rows;
   } catch (error) {
-    console.error("Database query error:", error);
+    console.error("getAllUsers query error:", error);
     throw error;
   }
 }
-// async function getAllUsers() {
-//   const query = "SELECT * FROM users";
-//   const [rows] = await db.execute(query);
-//   return rows;
-// }
 
 // Get a single user by ID
 async function getUserById(id) {

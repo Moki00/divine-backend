@@ -1,0 +1,13 @@
+=IF(AND([@typeCm]="err",[@typeTDMA]="err"),"need all from "&[@[First Last]],
+IF(AND([@[typeCm-1]]="Mobile - In Car",[@typeTDMA]="Portable"),"All good!",
+IF(AND([@[typeCm-1]]="Portable",[@typeTDMA]="Mobile - In Car"),"All good!",
+IF(AND([@typeCm]="Portable",[@typeTDMA]="err"),"need Mobile from "&[@[First Last]],
+IF(AND([@typeCm]="Portable",[@typeTDMA]="Portable"),"need Mobile from "&[@[First Last]],
+IF(AND([@typeCm]="err",[@typeTDMA]="Portable"),"need Mobile from "&[@[First Last]],
+IF(AND([@typeCm]="Mobile - In Car",[@typeTDMA]="Portable"),"All good!",
+IF(AND([@typeCm]="Portable",[@typeTDMA]="Mobile - In Car"),"All good!",
+IF(AND([@typeCm]="err",[@typeTDMA]="Mobile - In Car"),"need Portable from "&[@[First Last]],
+IF(AND([@typeCm]="Portable",[@typeTDMA]="Mobile - In Car"),"need Portable from "&[@[First Last]],
+IF(AND([@typeCm]="Mobile - In Car",[@typeTDMA]="Mobile - In Car"),"need Portable from "&[@[First Last]],
+IF(AND([@[TDMA-List]]="not-in-List",[@inCm]="User-not-in-CM"),"need all from "&[@[First Last]],
+"add more ifs"))))))))))))
