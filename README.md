@@ -30,3 +30,15 @@ curl -X PUT http://localhost:5000/api/users/1 -H "Content-Type: application/json
 # Delete User
 
 curl -X DELETE http://localhost:5000/api/users/1
+
+# Register User
+
+curl -X POST http://localhost:5000/api/auth/register \
+ -H "Content-Type: application/json" \
+ -d '{"name": "John Doe", "email": "john@example.com", "password": "securepass"}'
+
+# Login User
+
+curl -X POST http://localhost:5000/api/auth/login \
+ -H "Content-Type: application/json" \
+ -d '{"email": "john@example.com", "password": "securepass"}'

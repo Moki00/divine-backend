@@ -18,4 +18,20 @@ async function initializeDatabase() {
   }
 }
 
-module.exports = initializeDatabase;
+async function alterDatabase() {
+  const alterTableQuery = `
+    ALTER TABLE users ADD COLUMN password VARCHAR(255) NOT NULL;
+`;
+
+  try {
+    await db.execute(alterTableQuery);
+    console.log("✅ Users table has changed!");
+  } catch (error) {
+    console.error("❌ Error updating users table:", error.message);
+  }
+}
+
+module.exports = {
+  initializeDatabase,
+  alterDatabase,
+};

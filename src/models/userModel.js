@@ -1,5 +1,5 @@
 const db = require("../config/db");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 // Create a new user
 async function createUser(name, email) {
@@ -19,11 +19,16 @@ async function getAllUsers() {
   }
 }
 
-// Get a single user by ID
-async function getUserById(id) {
-  const query = "SELECT * FROM users WHERE id = ?";
-  const [rows] = await db.execute(query, [id]);
-  return rows[0];
+// Find User by ID
+async function findUserById(id) {
+  try {
+    const query = "SELECT * FROM users WHERE id = ?";
+    const [rows] = await db.execute(query, [id]);
+    return rows[0];
+  } catch (error) {
+    console.error("findUserById query error:", error);
+    throw error;
+  }
 }
 
 // Update a user
@@ -40,10 +45,27 @@ async function deleteUser(id) {
   return result.affectedRows > 0;
 }
 
+// Register User
+async function registerUser(name, email, password) {
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const query = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
+  const [result] = await db.execute(query, [name, email, hashedPassword]);
+  return result.insertId;
+}
+
+// Find User by Email
+async function findUserByEmail(email) {
+  const query = "SELECT * FROM users WHERE email = ?";
+  const [rows] = await db.execute(query, [email]);
+  return rows[0];
+}
+
 module.exports = {
   createUser,
   getAllUsers,
-  getUserById,
+  findUserById,
   updateUser,
   deleteUser,
+  registerUser,
+  findUserByEmail,
 };
