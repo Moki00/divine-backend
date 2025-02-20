@@ -9,7 +9,13 @@ const { initializeDatabase, alterDatabase } = require("./config/initDB"); // Imp
 const app = express(); // Initialize Express
 const PORT = process.env.PORT || 5000; // Set Port
 
-app.use(cors()); // Enable CORS
+const corsOptions = {
+  origin: "https://divine-backend.netlify.app", // Replace with your frontend URL
+  methods: "GET,POST,PUT,DELETE",
+  allowedHeaders: "Content-Type,Authorization",
+};
+
+app.use(cors(corsOptions)); // Enable CORS with options
 app.use(express.json()); // Enable req.body JSON data
 
 app.use("/api/users", userRoutes); // Use user routes
