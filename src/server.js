@@ -23,7 +23,7 @@ app.use("/api/auth", authRoutes); // Use auth routes
 
 async function setupDatabase() {
   await initializeDatabase(); // Initialize Database
-  await alterDatabase(); // Alter Database
+  // await alterDatabase(); // Alter Database
 }
 
 setupDatabase().then(() => {
