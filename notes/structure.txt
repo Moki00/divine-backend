@@ -1,4 +1,4 @@
-my-node-app/
+divine-backend/
 │── node_modules/
 │── .env
 │── .gitignore
@@ -8,10 +8,18 @@ my-node-app/
 │── src/
 	│── config/
 		│── db.js
+		│── emailService.js
+		│── initDB.js
 	│── controllers/
+		│── authController.js
+		│── contactController.js
 		│── userController.js
+	│── middleware/
+		│── authMiddleware.js
 	│── models/
 		│── userModel.js
 	│── routes/
+		│── authRoutes.js
+		│── contactRoutes.js
 		│── userRoutes.js
 	│── server.js
