@@ -10,7 +10,7 @@ const app = express(); // Initialize Express
 const PORT = process.env.PORT || 5000; // Set Port
 
 const corsOptions = {
-  origin: "https://divine-backend.netlify.app", // Replace with your frontend URL
+  origin: "https://divinehomesservices.com/", // frontend URL
   methods: "GET,POST,PUT,DELETE",
   allowedHeaders: "Content-Type,Authorization",
 };
