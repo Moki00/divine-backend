@@ -1,15 +1,18 @@
-require("dotenv").config(); // Import dotenv
-const express = require("express"); // Import Express
-const cors = require("cors"); // Import CORS
+// Import Dependencies and Initialize Express App
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const rateLimit = require("express-rate-limit");
+const PORT = process.env.PORT || 5000;
 
-const userRoutes = require("./routes/userRoutes"); // Import user routes
-const authRoutes = require("./routes/authRoutes"); // Import auth routes
-const contactRoutes = require("./routes/contactRoutes"); // Import contact routes
-const { initializeDatabase, alterDatabase } = require("./config/initDB"); // Import initializeDatabase and alterDatabase
+const app = express();
 
-const app = express(); // Initialize Express
-const PORT = process.env.PORT || 5000; // Set Port
+// Import Routes
+const userRoutes = require("./routes/userRoutes");
+const authRoutes = require("./routes/authRoutes");
+const contactRoutes = require("./routes/contactRoutes");
 
+// Middleware
 const corsOptions = {
   origin: ["http://127.0.0.1:5501", "https://divinehomesservices.com"], // Allow local and live frontend
   methods: "GET,POST,PUT,DELETE",
@@ -19,9 +22,22 @@ const corsOptions = {
 app.use(cors(corsOptions)); // Enable CORS with options
 app.use(express.json()); // Enable req.body JSON data
 
-app.use("/api/users", userRoutes); // Use user routes
-app.use("/api/auth", authRoutes); // Use auth routes
-app.use("/api", contactRoutes); // Use contact routes
+// rateLimit
+const limiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 1, // limit each IP to 1 request per windowMs
+  message: {
+    message: "Too many contact form submissions, please try again in a minute",
+  },
+});
+app.use("/api/contact", limiter);
+
+app.use("/api/users", userRoutes); // Use user Routes
+app.use("/api/auth", authRoutes); // Use auth Routes
+app.use("/api", contactRoutes); // Use contact Routes
+
+// Database
+const { initializeDatabase, alterDatabase } = require("./config/initDB");
 
 async function setupDatabase() {
   await initializeDatabase(); // Initialize Database
