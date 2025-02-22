@@ -24,10 +24,10 @@ app.use(express.json()); // Enable req.body JSON data
 
 // rateLimit
 const limiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
+  windowMs: 30 * 1000, // 30 seconds
   max: 1, // limit each IP to 1 request per windowMs
   message: {
-    message: "Too many contact form submissions, please try again in a minute",
+    message: "Too many submissions, please try again in 30 seconds",
   },
 });
 app.use("/api/contact", limiter);
