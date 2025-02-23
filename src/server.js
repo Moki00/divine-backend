@@ -32,9 +32,10 @@ const limiter = rateLimit({
 });
 app.use("/api/contact", limiter);
 
-app.use("/api/users", userRoutes); // Use user Routes
-app.use("/api/auth", authRoutes); // Use auth Routes
-app.use("/api", contactRoutes); // Use contact Routes
+// Routes
+app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api", contactRoutes);
 
 // Database
 const { initializeDatabase, alterDatabase } = require("./config/initDB");

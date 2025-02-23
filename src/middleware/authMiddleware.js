@@ -1,19 +1,20 @@
 const jwt = require("jsonwebtoken");
-const SECRET_KEY = process.env.JWT_SECRET || "your_jwt_secret";
+const SECRET_KEY = process.env.JWT_SECRET || "JWT_TOKEN";
 
-function authenticateToken(req, res, next) {
-  const authHeader = req.header("Authorization");
+function authenticateToken(request, response, next) {
+  const authHeader = request.header("Authorization");
+
   if (!authHeader?.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "Access denied" });
+    return response.status(401).json({ message: "Access denied" });
   }
 
   const token = authHeader.split(" ")[1]; // Extract the token after "Bearer"
 
   jwt.verify(token, SECRET_KEY, (err, decoded) => {
     if (err) {
-      return res.status(403).json({ message: "Invalid token" });
+      return response.status(403).json({ message: "Invalid token" });
     }
-    req.user = decoded;
+    request.user = decoded;
     next();
   });
 }
