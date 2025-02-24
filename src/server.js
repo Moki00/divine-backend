@@ -38,10 +38,14 @@ app.use("/api/auth", authRoutes);
 app.use("/api", contactRoutes);
 
 // Database
-const { initializeDatabase, alterDatabase } = require("./config/initDB");
+const {
+  initializeDatabase,
+  alterDatabase,
+  initDbContacts,
+} = require("./config/initDB");
 
 async function setupDatabase() {
-  await initializeDatabase(); // Initialize Database
+  await initDbContacts(); // Initialize Database
   // await alterDatabase(); // Alter Database
 }
 

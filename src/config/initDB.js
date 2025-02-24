@@ -19,6 +19,26 @@ async function initializeDatabase() {
   }
 }
 
+async function initDbContacts() {
+  const createTableQuery = `
+  CREATE TABLE IF NOT EXISTS contacts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    from_name VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(20) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    file_path VARCHAR(255) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  )`;
+
+  try {
+    await db.execute(createTableQuery);
+    console.log("✅ contacts table is ready!");
+  } catch (error) {
+    console.error("❌ Error creating contacts table:", error.message);
+  }
+}
+
 async function alterDatabase() {
   const alterTableQuery = `
     ALTER TABLE users ADD COLUMN password VARCHAR(255) NOT NULL;
@@ -34,5 +54,6 @@ async function alterDatabase() {
 
 module.exports = {
   initializeDatabase,
+  initDbContacts,
   alterDatabase,
 };

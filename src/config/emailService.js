@@ -1,23 +1,32 @@
 require("dotenv").config();
 const nodemailer = require("nodemailer");
+const path = require("path");
 
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || "smtp.gmail.com",
-  port: process.env.SMTP_PORT || 587,
-  secure: false, // Use `true` for port 465, `false` for 587
+  host: process.env.SMTP_HOST,
+  port: process.env.SMTP_PORT,
+  secure: process.env.SMTP_SECURE === "true",
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
 });
 
-async function sendEmail(to, subject, text) {
+async function sendEmail(to, subject, text, filePath) {
   try {
     const mailOptions = {
       from: `"Divine Backend" <${process.env.SMTP_USER}>`,
       to,
       subject,
       text,
+      attachments: filePath
+        ? [
+            {
+              filename: path.basename(filePath),
+              path: filePath, // Attach uploaded file
+            },
+          ]
+        : [],
     };
 
     const info = await transporter.sendMail(mailOptions);
@@ -25,7 +34,7 @@ async function sendEmail(to, subject, text) {
     return { success: true, message: "Email sent successfully!" };
   } catch (error) {
     console.error("❌ Email sending error: ", error);
-    return { success: false, message: "Failed to send email." };
+    return { success: false, error: error.message };
   }
 }
 

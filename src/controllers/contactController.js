@@ -2,14 +2,34 @@ const { body, validationResult } = require("express-validator"); // Form validat
 const multer = require("multer"); // File upload middleware
 const path = require("path"); // directory path utility
 const { sendEmail } = require("../config/emailService"); // Email service
+const db = require("../config/db"); // Database connection
+const fs = require("fs"); // File System utility
+
+async function waitForFile(filePath, maxAttempts = 10, delayMs = 500) {
+  let attempts = 0;
+  while (attempts < maxAttempts) {
+    try {
+      await fs.promises.access(filePath);
+      return true;
+    } catch (err) {
+      console.log(`⏳ Waiting for file (${attempts + 1}/${maxAttempts})...`);
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+      attempts++;
+    }
+  }
+  return false;
+}
+
+// generate unique file names
+const { nanoid } = require("nanoid");
 
 // multer for file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "uploads/"); // Store files in the "uploads" folder
+    cb(null, "src/uploads/"); // Store location
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname); // Unique filename
+    cb(null, nanoid(7) + "-" + file.originalname);
   },
 });
 
@@ -57,32 +77,51 @@ const validateContactForm = [
 ];
 
 // Handle form submission
-async function contactFormHandler(req, res) {
-  const errors = validationResult(req);
+async function contactFormHandler(request, response) {
+  const errors = validationResult(request);
   if (!errors.isEmpty()) {
     return res.status(400).json({ message: errors.array()[0].msg });
   }
 
-  const { from_name, phone_number, email, message } = req.body;
-  const file = req.file ? req.file.filename : null;
+  const { from_name, phone_number, email, message } = request.body;
+  const filePath = request.file
+    ? path.join(__dirname, "..", "uploads", request.file.filename)
+    : null;
 
   try {
+    // Wait for file to be created (Retries up to 2.5 seconds)
+    if (filePath && !(await waitForFile(filePath))) {
+      console.error("❌ File not found after waiting:", filePath);
+      return response
+        .status(500)
+        .json({ message: "File upload failed, please try again." });
+    }
+
+    // Store data in MySQL
+    const sql = `INSERT INTO contacts (from_name, phone_number, email, message, file_path) VALUES (?, ?, ?, ?, ?)`;
+    await db.execute(sql, [from_name, phone_number, email, message, filePath]);
+
+    // Send email with attachment
     const subject = "New Contact Form Submission";
     let text = `Name: ${from_name}\nPhone: ${phone_number}\nEmail: ${email}\nMessage: ${message}`;
 
-    if (file) {
-      text += `\n\nAttached file: ${file}`;
-    }
+    const sentEmail = await sendEmail(
+      process.env.CONTACT_EMAIL,
+      subject,
+      text,
+      filePath
+    );
 
-    const response = await sendEmail(process.env.CONTACT_EMAIL, subject, text);
-    if (response.success) {
-      res.status(200).json({ message: "Your message has been sent!" });
+    if (sentEmail.success) {
+      response.status(200).json({ message: "Your message has been sent!" });
     } else {
-      res.status(500).json({ message: "Email sending failed." });
+      response
+        .status(500)
+        .json({ message: "Email sending failed, but the message was saved." });
     }
   } catch (error) {
     console.error("❌ Contact form error:", error);
-    res.status(500).json({ message: "Server error." });
+    response.status(500).json({ message: "Server error." });
   }
 }
 
