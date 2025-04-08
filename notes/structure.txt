@@ -18,6 +18,7 @@ divine-backend/
 		│── authMiddleware.js
 	│── models/
 		│── userModel.js
+		│── contactModel.js
 	│── routes/
 		│── authRoutes.js
 		│── contactRoutes.js
